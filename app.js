@@ -1,65 +1,65 @@
 const express = require("express");
-const bodyParser = require("body-parser");
-
 const app = express();
-app.use(bodyParser.json());
+const PORT = 3000;
 
-const PORT = process.env.PORT || 3000;
+app.use(express.json());
+
+app.get("/", (req, res) => {
+  res.send("Server is up and running!");
+});
 
 app.get("/bfhl", (req, res) => {
-  // GET endpoint to test if the API is alive
-  res.status(200).json({
-    operation_code: 1,
+  res.json({
+    operation_code: 1
   });
 });
 
 app.post("/bfhl", (req, res) => {
   const input = req.body.data;
 
-  let odd = [];
-  let even = [];
-  let alphabets = [];
-  let special = [];
-  let total = 0;
-  let rawLetters = "";
+  const odd = [];
+  const even = [];
+  const alphabets = [];
+  const specialChars = [];
+  let sum = 0;
 
-  input.forEach((val) => {
-    if (/^-?\d+$/.test(val)) {
-      let num = parseInt(val);
-      total += num;
-      if (num % 2 === 0) even.push(val);
-      else odd.push(val);
-    } else if (/^[a-zA-Z]+$/.test(val)) {
-      alphabets.push(val.toUpperCase());
-      rawLetters += val;
+  input.forEach(item => {
+    if (!isNaN(item)) {
+      const num = parseInt(item);
+      if (num % 2 === 0) {
+        even.push(item);
+      } else {
+        odd.push(item);
+      }
+      sum += num;
+    } else if (/^[a-zA-Z]$/.test(item)) {
+      alphabets.push(item.toUpperCase());
     } else {
-      special.push(val);
+      specialChars.push(item);
     }
   });
 
-  // Reverse alternating caps from rawLetters
-  let rev = rawLetters.split("").reverse();
-  let concatString = rev
-    .map((ch, idx) => (idx % 2 === 0 ? ch.toUpperCase() : ch.toLowerCase()))
-    .join("");
+  const reversed = alphabets.join('').split('').reverse();
+  const formatted = reversed
+    .map((ch, i) => (i % 2 === 0 ? ch.toUpperCase() : ch.toLowerCase()))
+    .join('');
 
-  res.status(200).json({
+  const response = {
     is_success: true,
-    user_id: "nandini_bakshi_24062004",
-    email: "nandini@chitkara.edu.in",
-    roll_number: "2210999999",
+    user_id: "nandini_24062004",
+    email: "nandini597.be22@chitkara.edu.in",
+    roll_number: "2210990597",
     odd_numbers: odd,
     even_numbers: even,
     alphabets: alphabets,
-    special_characters: special,
-    sum: total.toString(),
-    concat_string: concatString,
-  });
-});
-app.get("/", (req, res) => {
-  res.send("👋 Welcome to Nandini's BFHL API! Use /bfhl to test the API.");
+    special_characters: specialChars,
+    sum: sum.toString(),
+    concat_string: formatted
+  };
+
+  res.json(response);
 });
 
 app.listen(PORT, () => {
-  console.log(`✅ Server running on http://localhost:${PORT}`);
+  console.log(`Server running on port ${PORT}`);
 });

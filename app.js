@@ -56,6 +56,9 @@ app.post("/bfhl", (req, res) => {
     concat_string: concatString,
   });
 });
+app.get("/", (req, res) => {
+  res.send("👋 Welcome to Nandini's BFHL API! Use /bfhl to test the API.");
+});
 
 app.listen(PORT, () => {
   console.log(`✅ Server running on http://localhost:${PORT}`);
